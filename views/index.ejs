@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Uploader</title>
+</head>
+<body>
+    <header>
+        <h1>File uploader</h1>
+        <h2>Sign in to use</h2>
+    </header>
+    <div class="login-div">
+        <h1>Log in!</h1>
+                <form action="/log-in" method="POST">
+                    <label for="email">Email</label>
+                    <input type="text" name="email" id="email" placeholder="email" />
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" />
+                    <button>Log In</button>
+                </form>
+                <a href="/sign-up">Create an account</a>
+                <div class="sign-up-container">
+                    <div class="sign-up">
+                        <h1>Sign up to write a message. And see who is behind them</h1>
+                        <form action="/sign-up" method="POST">
+                            <label for="firstName">First Name:</label>
+                            <input type="text" name="firstName" id="firstName" required>
+                            <label for="lastName">Last Name:</label>
+                            <input type="text" name="lastName" id="lastName" required>
+                            <label for="email">E-Mail:</label>
+                            <input type="email" name="email" id="email" required>
+                            <label for="password">Password:</label>
+                            <input type="password" name="password" id="password">
+                            <label for="confirm-password">Confirm password:</label>
+                            <input type="password" name="confirm-password" id="confirm-password">
+                            <button type="submit">Submit</button>
+                        </form>
+                    </div>
+                </div>
+    </div>
+</body>
+</html>
