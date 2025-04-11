@@ -1,0 +1,12 @@
+div.login-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.sign-up-container{
+    width: 500px;
+    & form{
+        display: flex;
+        flex-direction: column;
+    }
+}
