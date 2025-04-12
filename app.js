@@ -6,6 +6,7 @@ const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
 const { PrismaClient } = require('@prisma/client');
 const { getIndex, createUserPost, auth, userFilePost } = require('./controllers/userController');
 const userFileRouter = require('./routes/userFileRouter');
+const { nextTick } = require('node:process');
 
 const app = express()
 
@@ -38,6 +39,14 @@ app.use(express.urlencoded({extended: false}));
 app.get("/", getIndex);
 app.post("/sign-up", createUserPost);
 app.post("/log-in", auth());
+app.get("/log-out", (req, res) => {
+    req.logOut((err) => {
+        if(err){
+            console.error(err)
+        }
+        res.redirect("/")
+    })
+})
 app.use("/user-file", userFileRouter)
 
 app.listen(3000, () => console.log("Server listening on port three thousand"))

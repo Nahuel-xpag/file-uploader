@@ -6,50 +6,56 @@
     <title>File Uploader</title>
     <link rel="stylesheet" href="/index.css">
 </head>
-<body>
-    <header>
-        <h1>File uploader</h1>
-        <h2>Esto no es música, es droga</h2>
-    </header>
     <%if(locals.user){%>
-    <h1>Welcome <%=user.name%><h1>
-    <main>
-        <div class="file-form">
-            <form action="/user-file" method="POST" enctype="multipart/form-data">
-                <label for="fotis">Upload a file</label>
-                <input type="file" name="fotis">
-                <button>Submitibi toilet</button>
-            </form>
-        </div>
-    </main>
-    <%}else{%>
-    <div class="login-div">
-        <h1>Log in!</h1>
-                <form action="/log-in" method="POST">
-                    <label for="email">Email</label>
-                    <input type="text" name="email" id="email" placeholder="email" />
-                    <label for="password">Password</label>
-                    <input type="password" name="password" id="password" />
-                    <button>Log In</button>
+    <body class="user-logged-body">
+        <header>
+            <h1>File uploader</h1>
+            <h2>Esto no es música, es droga</h2>
+                <h1>Welcome <%=user.name%><h1>
+                <a href="/log-out">Log Out</a>
+        </header>
+        <div class="sidebar">
+            <div class="file-form">
+                <form action="/user-file" method="POST" enctype="multipart/form-data">
+                    <label for="fotis">Upload a file</label>
+                    <input type="file" name="fotis">
+                    <button>Submitibi toilet</button>
                 </form>
-                <a href="/sign-up">Create an account</a>
-                <div class="sign-up-container">
-                    <div class="sign-up">
-                        <h1>Sign up</h1>
-                        <form action="/sign-up" method="POST">
-                            <label for="name">Name:</label>
-                            <input type="text" name="name" id="name" required>
-                            <label for="email">E-Mail:</label>
-                            <input type="email" name="email" id="email" required>
-                            <label for="password">Password:</label>
-                            <input type="password" name="password" id="password">
-                            <label for="confirm-password">Confirm password:</label>
-                            <input type="password" name="confirm-password" id="confirm-password">
-                            <button type="submit">Submit</button>
-                        </form>
+            </div>
+        </div>
+        <main>
+            <h1>Your uploaded files are going to appear here</h1>
+        </main>
+    </body>
+    <%}else{%>
+    <body>
+        <div class="login-div">
+            <h1>Log in!</h1>
+                    <form action="/log-in" method="POST">
+                        <label for="email">Email</label>
+                        <input type="text" name="email" id="email" placeholder="email" />
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password" />
+                        <button>Log In</button>
+                    </form>
+                    <a href="/sign-up">Create an account</a>
+                    <div class="sign-up-container">
+                        <div class="sign-up">
+                            <h1>Sign up</h1>
+                            <form action="/sign-up" method="POST">
+                                <label for="name">Name:</label>
+                                <input type="text" name="name" id="name" required>
+                                <label for="email">E-Mail:</label>
+                                <input type="email" name="email" id="email" required>
+                                <label for="password">Password:</label>
+                                <input type="password" name="password" id="password">
+                                <label for="confirm-password">Confirm password:</label>
+                                <input type="password" name="confirm-password" id="confirm-password">
+                                <button type="submit">Submit</button>
+                            </form>
+                        </div>
                     </div>
-                </div>
-    </div>
+        </div>
+    </body>
     <%}%>
-</body>
 </html>

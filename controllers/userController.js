@@ -1,9 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const bcrypt = require('bcryptjs');
-const multer = require('multer');
 
-//const upload = multer({dest: './files'})
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -23,7 +21,7 @@ passport.use(
                     console.log("user not found");
                     return done(null, false, {message: "user not found"});
                 }
-                const  match = password = user.password;
+                const  match = bcrypt.compare(password, user.password);
                 if (!match){
                     console.log("wrrong pw");
                     return done(null, false, {message: "incorrect password"});
@@ -58,11 +56,12 @@ exports.getIndex = (req,res) => {
 exports.createUserPost = async (req, res, next) => {
     try{
         const {name, email, password} = req.body;
+        const hashedPassword =  await bcrypt.hash(password, 10);
         await prisma.user.create({
             data: {
                 name: name,
                 email: email,
-                password: password
+                password: hashedPassword
             }
             }).catch(e => console.error(e))
         .finally(async() => await prisma.$disconnect());
