@@ -4,7 +4,8 @@ const path = require('node:path');
 const expressSession = require('express-session');
 const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
 const { PrismaClient } = require('@prisma/client');
-const { getIndex } = require('./controllers/userController');
+const { getIndex, createUserPost, auth, userFilePost } = require('./controllers/userController');
+const userFileRouter = require('./routes/userFileRouter');
 
 const app = express()
 
@@ -34,6 +35,9 @@ app.use(expressSession({
 );
 app.use(passport.session());
 app.use(express.urlencoded({extended: false}));
-app.get("/", getIndex)
+app.get("/", getIndex);
+app.post("/sign-up", createUserPost);
+app.post("/log-in", auth());
+app.use("/user-file", userFileRouter)
 
 app.listen(3000, () => console.log("Server listening on port three thousand"))

@@ -11,6 +11,18 @@
         <h1>File uploader</h1>
         <h2>Esto no es música, es droga</h2>
     </header>
+    <%if(locals.user){%>
+    <h1>Welcome <%=user.name%><h1>
+    <main>
+        <div class="file-form">
+            <form action="/user-file" method="POST" enctype="multipart/form-data">
+                <label for="fotis">Upload a file</label>
+                <input type="file" name="fotis">
+                <button>Submitibi toilet</button>
+            </form>
+        </div>
+    </main>
+    <%}else{%>
     <div class="login-div">
         <h1>Log in!</h1>
                 <form action="/log-in" method="POST">
@@ -26,7 +38,7 @@
                         <h1>Sign up</h1>
                         <form action="/sign-up" method="POST">
                             <label for="name">Name:</label>
-                            <input type="text" name="firstName" id="firstName" required>
+                            <input type="text" name="name" id="name" required>
                             <label for="email">E-Mail:</label>
                             <input type="email" name="email" id="email" required>
                             <label for="password">Password:</label>
@@ -38,5 +50,6 @@
                     </div>
                 </div>
     </div>
+    <%}%>
 </body>
 </html>

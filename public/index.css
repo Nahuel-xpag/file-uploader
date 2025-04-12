@@ -10,3 +10,17 @@ div.login-div {
         flex-direction: column;
     }
 }
+main{
+    display: flex;
+    flex-direction: column;
+}
+.file-form{
+    align-self: center;
+    border: 1px solid red;
+    width: 500px;
+    height: 400px;
+    & form{
+        display: flex;
+        flex-direction: column;
+    }
+}
