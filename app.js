@@ -4,9 +4,9 @@ const path = require('node:path');
 const expressSession = require('express-session');
 const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
 const { PrismaClient } = require('@prisma/client');
-const { getIndex, createUserPost, auth, userFilePost } = require('./controllers/userController');
+const {createUserPost, auth} = require('./controllers/userController');
 const userFileRouter = require('./routes/userFileRouter');
-const { nextTick } = require('node:process');
+const indexRouter = require('./routes/indexRouter');
 
 const app = express()
 
@@ -36,7 +36,7 @@ app.use(expressSession({
 );
 app.use(passport.session());
 app.use(express.urlencoded({extended: false}));
-app.get("/", getIndex);
+app.use("/", indexRouter);
 app.post("/sign-up", createUserPost);
 app.post("/log-in", auth());
 app.get("/log-out", (req, res) => {

@@ -3,6 +3,7 @@ const LocalStrategy = require('passport-local');
 const bcrypt = require('bcryptjs');
 
 const { PrismaClient } = require('@prisma/client');
+const { findUser } = require('../prisma/methods');
 const prisma = new PrismaClient();
 
 passport.use(
@@ -38,20 +39,34 @@ passport.serializeUser((user, done) => {
     done(null, user.id);
 });
 passport.deserializeUser(async (id, done) => {
+    console.log(id)
     try {
-        const user = await prisma.user.findUnique({
-            where: {
-                id: id
-            }
-        }).finally(async () => await prisma.$disconnect());
+        const user = await findUser(id);
         done(null, user)
     } catch(err){
         done(err);
     } 
 });
 
-exports.getIndex = (req,res) => {
-    res.render("index", {user: req.user});
+exports.getIndex = async (req,res) => {
+    if(req.user){
+        const userFiles = await findUser(req.user.id);
+        res.render("index", {user: req.user, folders: userFiles.folders[0]});
+    }else{
+        res.render("index");
+    }
+    
+}
+exports.getUserFolder = async (req, res) => {
+    const userFolders = await prisma.folder.findUnique({
+        where: {
+            id : req.params.folderId,
+        },
+        include: {
+            files: true
+        },
+    })
+    res.render("index", {user: req.user, folders: userFolders})
 }
 exports.createUserPost = async (req, res, next) => {
     try{
@@ -61,8 +76,13 @@ exports.createUserPost = async (req, res, next) => {
             data: {
                 name: name,
                 email: email,
-                password: hashedPassword
-            }
+                password: hashedPassword,
+                folders: {
+                    create: [
+                        {name: name + 'default'},
+                    ],
+                },
+            },
             }).catch(e => console.error(e))
         .finally(async() => await prisma.$disconnect());
         res.render("index");
@@ -74,4 +94,25 @@ exports.createUserPost = async (req, res, next) => {
 exports.auth = () => passport.authenticate("local", {
     successRedirect: "/",
     failureRedirect: "/"
-})
+});
+
+exports.fileHandler = async (req, res) => {
+    const defaultFolderId = await prisma.user.findUnique({
+        where: {
+            id : req.user.id,
+        },
+        include: {
+            folders: true
+            
+        },
+    })
+    
+    await prisma.file.create({
+        data: {
+            name: req.file.originalname,
+            folderId: req.params.folderId ?? defaultFolderId.folders[0].id
+        }
+    })
+    console.log("done", req.file);
+    res.redirect("/");
+}
