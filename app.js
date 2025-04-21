@@ -7,6 +7,7 @@ const { PrismaClient } = require('@prisma/client');
 const {createUserPost, auth} = require('./controllers/userController');
 const userFileRouter = require('./routes/userFileRouter');
 const indexRouter = require('./routes/indexRouter');
+const folderRouter = require('./routes/folderRouter');
 
 const app = express()
 
@@ -47,6 +48,7 @@ app.get("/log-out", (req, res) => {
         res.redirect("/")
     })
 })
-app.use("/user-file", userFileRouter)
+app.use("/user-file", userFileRouter);
+app.use("/folder", folderRouter);
 
 app.listen(3000, () => console.log("Server listening on port three thousand"))

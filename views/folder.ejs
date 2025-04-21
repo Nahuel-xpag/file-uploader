@@ -1,0 +1,53 @@
+<head>
+    <link rel="stylesheet" href="/index.css">
+</head>
+<%if(locals.folder && locals.user){%>
+    <body class="user-logged-body">
+    <header>
+        <h1>File uploader</h1>
+        <a href="/">Back</a>
+        <h2><%=user.name%>/<%=folder.name%></h2>
+    </header>
+    <div class="sidebar">
+        <div class="file-form">
+            <button class="create-folder">New Folder</button>
+            <form action="/user-file" method="POST" enctype="multipart/form-data">
+                <label for="fotis">Upload a file</label>
+                <input type="file" name="fotis">
+                <button>Submitibi toilet</button>
+            </form>
+            <div id="overlay"></div>
+            <form action="/user-file/new-folder" method="POST" id="new-folder-form">
+                <label for="folderName">Newerino folderino</label>
+                <input type="text" name="folderName" id="folderName">
+                <button id="close-form">Close</button>
+                <button>Create</button>
+            </form>
+        </div>
+    </div>
+    <main>
+        <%if(locals.folders && locals.folders.length > 0){%>
+            <h2>Your folders</h2>
+                <div class="folder-div">    
+                    <%folders.forEach(function(folder){%>
+                        <a href="/" class="folder">
+                            <img src="assets/imgs/icons/folder-icon.png" alt="icon of a folder">
+                            <h4><%=folder.name%></h4>
+                        </a>
+                    <%})%>
+                </div>    
+        <%}if(locals.files && locals.files.length > 0){%>
+            <h2>Your files</h2>    
+            <ul>
+                <%files.forEach(function(file){%>
+                    <li class="file"><%=file.name%></li>
+                <%})%>
+            </ul>
+        <%}else{%>
+            <h1>This folder is currently empty</h1>
+        <%}%>
+    </main>
+</body>
+<%}else{%>
+    <h1>Log in to upload files</h1>
+<%}%>

@@ -27,7 +27,9 @@ body.user-logged-body{
         grid-row: 2 / 3;
         grid-column: 2 / 3;
         border-top: 1px solid black;
-        background-image: linear-gradient(rgb(201, 232, 241), rgb(236, 231, 235))
+        background-color: rgb(114, 115, 116);
+        color: rgb(255, 255, 255);
+        text-shadow: 1px 1px 0px black;
     }
 }
 
@@ -46,6 +48,35 @@ div.login-div {
 main{
     display: flex;
     flex-direction: column;
+    gap: 12px;
+}
+.folder-div{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+.folder{
+    display: flex;
+    align-items: center;
+    width: 100px;
+    border: 1px solid black;
+    border-radius: 12px;
+    padding: 8px;
+    overflow: hidden;
+    & img {
+        width: 25px;
+        height: 25px;
+    };
+    & h4{
+        max-width: 50px;
+    }
+}
+.folder:hover{
+    background-color: rgb(49, 49, 49);
+}
+.folder:focus{
+    overflow: visible;
+    background-color: rgb(49, 49, 49);
 }
 .file-form{
     align-self: center;

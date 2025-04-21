@@ -10,9 +10,9 @@
     <body class="user-logged-body">
         <header>
             <h1>File uploader</h1>
-            <h2>Esto no es música, es droga</h2>
-                <h1>Welcome <%=user.name%><h1>
-                <a href="/log-out">Log Out</a>
+            <h1>Welcome <%=user.name%><h1>
+            <a href="/log-out">Log Out</a>
+            <h2>Your unit</h2>
         </header>
         <div class="sidebar">
             <div class="file-form">
@@ -32,14 +32,25 @@
             </div>
         </div>
         <main>
-            <%if(locals.folders && locals.folders.length > 0){%>    
+            <%if(locals.folders && locals.folders.length > 0){%>
+                <h2>Your folders</h2>
+                    <div class="folder-div">    
+                        <%folders.forEach(function(folder){%>
+                            <a href="/folder/<%=folder.id%>" class="folder">
+                                <img src="assets/imgs/icons/folder-icon.png" alt="icon of a folder">
+                                <h4><%=folder.name%></h4>
+                            </a>
+                        <%})%>
+                    </div>    
+            <%}if(locals.files && locals.files.length > 0){%>
+                <h2>Your files</h2>    
                 <ul>
-                    <%folders.forEach(function(folder){%>
-                        <li class="item"><%=folder.name%></li>
+                    <%files.forEach(function(file){%>
+                        <li class="file"><%=file.name%></li>
                     <%})%>
                 </ul>
             <%}else{%>
-                <h1>Your uploaded files are going to appear here</h1>
+                <h1>Your files and folders are going to appear here</h1>
             <%}%>
         </main>
     </body>
@@ -93,6 +104,22 @@
             document.body.style.overflow = 'auto';
             newFolderForm.removeAttribute('pressed')
         })
+        
 
+
+        const folder = document.querySelectorAll('a.folder');
+        let counter = 0;
+        folder.forEach((folder) => {
+            folder.addEventListener('click',(e) => {
+            counter++;
+            setTimeout(() => {
+                counter = 0;
+            },250);
+            if(counter < 2){
+                e.preventDefault()
+            };
+           console.log(counter)
+        })
+    })
     </script>
 </html>

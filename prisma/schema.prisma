@@ -22,11 +22,14 @@ model User {
 }
 
 model Folder {
-  id        Int    @id @default(autoincrement())
-  name      String
-  owner     User   @relation(fields: [userId], references: [id])
-  userId    Int
-  files     File[] 
+  id              Int       @id @default(autoincrement())
+  name            String
+  owner           User      @relation(fields: [userId], references: [id])
+  userId          Int
+  files           File[] 
+  parentFolder    Folder?   @relation("parentFolder", fields: [parentFolderId], references: [id])
+  parentFolderId  Int?
+  childFolders    Folder[]  @relation("parentFolder")
 }
 
 model File {
@@ -34,7 +37,7 @@ model File {
   name      String
   folder    Folder  @relation(fields: [folderId], references: [id])
   folderId  Int
-  path      String
+  path      String?
 }
 
 model Session {

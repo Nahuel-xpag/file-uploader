@@ -1,10 +1,11 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const bcrypt = require('bcryptjs');
+const path = require('node:path');
+const fs = require('fs')
 
-const { PrismaClient } = require('@prisma/client');
-const { findUser } = require('../prisma/methods');
-const prisma = new PrismaClient();
+const { findUser, findFolder, createUser, createFolder, createFile } = require('../prisma/methods');
+
 
 passport.use(
     new LocalStrategy({
@@ -12,19 +13,14 @@ passport.use(
         passwordField: 'password'
     }, async (email, password, done) => {
             try {
-                const user = await prisma.user.findUnique({
-                    where: {
-                        email: email,
-                    },
-                })
-
+                const user = await findUser(false, false, email)
                 if(!user){
                     console.log("user not found");
                     return done(null, false, {message: "user not found"});
                 }
                 const  match = bcrypt.compare(password, user.password);
                 if (!match){
-                    console.log("wrrong pw");
+                    console.log("wrong pw");
                     return done(null, false, {message: "incorrect password"});
                 }
                 return done(null, user);
@@ -48,71 +44,55 @@ passport.deserializeUser(async (id, done) => {
     } 
 });
 
-exports.getIndex = async (req,res) => {
-    if(req.user){
-        const userFiles = await findUser(req.user.id);
-        res.render("index", {user: req.user, folders: userFiles.folders[0]});
-    }else{
-        res.render("index");
-    }
-    
-}
-exports.getUserFolder = async (req, res) => {
-    const userFolders = await prisma.folder.findUnique({
-        where: {
-            id : req.params.folderId,
-        },
-        include: {
-            files: true
-        },
-    })
-    res.render("index", {user: req.user, folders: userFolders})
-}
-exports.createUserPost = async (req, res, next) => {
-    try{
-        const {name, email, password} = req.body;
-        const hashedPassword =  await bcrypt.hash(password, 10);
-        await prisma.user.create({
-            data: {
-                name: name,
-                email: email,
-                password: hashedPassword,
-                folders: {
-                    create: [
-                        {name: name + 'default'},
-                    ],
-                },
-            },
-            }).catch(e => console.error(e))
-        .finally(async() => await prisma.$disconnect());
-        res.render("index");
-    } catch(err){
-        return next(err);
-    }
-}
 
 exports.auth = () => passport.authenticate("local", {
     successRedirect: "/",
     failureRedirect: "/"
 });
 
-exports.fileHandler = async (req, res) => {
-    const defaultFolderId = await prisma.user.findUnique({
-        where: {
-            id : req.user.id,
-        },
-        include: {
-            folders: true
-            
-        },
-    })
+exports.getIndex = async (req,res) => {
+    if(req.user){
+        const userFiles = await findUser(req.user.id);
+        console.log(userFiles.folders[0]);
+        res.render("index", {user: req.user, files: userFiles.folders[0].files, folders: userFiles.folders[0].childFolders});
+    }else{
+        res.render("index");
+    }
     
-    await prisma.file.create({
-        data: {
-            name: req.file.originalname,
-            folderId: req.params.folderId ?? defaultFolderId.folders[0].id
-        }
-    })
+}
+
+exports.createUserPost = async (req, res, next) => {
+    try{
+        const {name, email, password} = req.body;
+        const hashedPassword =  await bcrypt.hash(password, 10);
+        await createUser(name, email, hashedPassword);
+        res.render("index");
+    } catch(err){
+        return next(err);
+    }
+}
+
+exports.getUserFolder = async (req, res) => {
+    const userFolders = await findFolder(req.params.folderId);
+    res.render("index", {user: req.user, folders: userFolders})
+}
+
+exports.createFolderPost = async (req, res) => {
+    try {
+          await createFolder(req.body.folderName, req.user.id);
+          const dest = path.join(process.env.FILES_PATH, String(req.user.id), req.params.folderId ?? '');
+          fs.mkdirSync(path.join(dest, req.body.folderName), {recursive: true});
+      } catch(err) {
+          console.error(err)
+      }
+       res.redirect("/")
+}
+
+exports.fileHandler = async (req, res) => {
+    const currentUser = await findUser(req.user.id);
+    const defaultFolderId = currentUser.folders[0].id;
+    await createFile(req.file.originalname, req.params.folderId ?? defaultFolderId);
+
     console.log("done", req.file);
     res.redirect("/");
 }
