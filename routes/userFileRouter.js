@@ -3,14 +3,23 @@ const multer = require('multer');
 const userFileRouter = Router();
 const path = require('node:path')
 const fs = require('fs');
-const { fileHandler, createFolderPost } = require('../controllers/userController');
+const { fileHandler} = require('../controllers/userController');
+const { findFolder } = require('../prisma/methods');
 
 //add a function to store files on its folder for the corresponding user OR DIE TRYING
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      const dest = path.join(process.env.FILES_PATH, String(req.user.id));
-      fs.mkdirSync(dest, {recursive: true});
-      cb(null, dest)
+    destination: async function (req, file, cb) {
+      const {folderId} = req.params;
+      const folder = await findFolder(parseInt(folderId, 10));
+      if (!folder) {
+        const dest = path.join(process.env.FILES_PATH, String(req.user.id));
+        fs.mkdirSync(dest, {recursive: true});
+        cb(null, dest)
+      }else{
+        const dest = path.join(process.env.FILES_PATH, String(req.user.id), folder.name);
+        fs.mkdirSync(dest, {recursive: true});
+        cb(null, dest)
+      }
     },
     filename: function (req, file, cb) {
       const uniquePrefix = Date.now() + '-' + Math.round(Math.random() * 1E9)
@@ -21,5 +30,5 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 userFileRouter.post("/", upload.single('fotis'), fileHandler);
-userFileRouter.post("/new-folder", createFolderPost)
+userFileRouter.post("/:folderId", upload.single('fotis'), fileHandler);
 module.exports = userFileRouter

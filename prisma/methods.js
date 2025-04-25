@@ -75,11 +75,52 @@ exports.findFolder = async (folderId) => {
             id: folderId
         },
         include:{
-            files: true
+            files: true,
+            childFolders: true
         },
     }).catch(async (err) => {prisma.$disconnect(); console.log(err)})
     .finally(async () => prisma.$disconnect());
     return folder
+}
+//check if folder contains files or folders before deleting
+//check if folder is empty before deleting
+exports.deleteFolder = async (folderId) => {
+    const folder = await prisma.folder.delete({
+        where:{
+            id: folderId
+        },
+    }).catch(async (err) => {prisma.$disconnect(); console.log(err)})
+    .finally(async () => prisma.$disconnect());
+    return folder
+}
+exports.deleteFolderWithFiles = async (folderId) => {
+    
+    const deleteFiles = await prisma.file.deleteMany({
+        where:{
+            folderId: folderId
+        }
+    })
+
+    const deleteFolder = await prisma.folder.delete({
+        where:{
+            id: folderId
+        }
+    })
+
+    const transaction = await prisma.$transaction([deleteFolder, deleteFiles])
+    .catch(async (err) => {prisma.$disconnect(); console.log(err)})
+    .finally(async () => prisma.$disconnect());
+    return transaction
+}
+//must check if this works later
+exports.deleteFile = async (fileId) => {
+    const file = await prisma.file.delete({
+        where:{
+            id: fileId
+        },
+    }).catch(async (err) => {prisma.$disconnect(); console.log(err)})
+    .finally(async () => prisma.$disconnect());
+    return file
 }
 
 exports.createFile = async (name, folderId) => {

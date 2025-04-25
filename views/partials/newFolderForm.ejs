@@ -1,0 +1,35 @@
+<div class="file-form">
+    <button class="create-folder">New Folder</button>
+    <form action="/user-file" method="POST" enctype="multipart/form-data">
+        <label for="fotis">Upload a file</label>
+        <input type="file" name="fotis">
+        <button>Submitibi toilet</button>
+    </form>
+    <div id="overlay"></div>
+    <form action="/folder/new-folder/<%=locals.folderId%>" method="POST" id="new-folder-form">
+        <label for="folderName">Newerino folderino</label>
+        <input type="text" name="folderName" id="folderName">
+        <button id="close-form">Close</button>
+        <button>Create</button>
+    </form>
+</div>
+<script>
+    const newFolderButton = document.querySelector('.create-folder');
+        const newFolderForm = document.getElementById('new-folder-form');
+        const overlay = document.getElementById('overlay');
+        const closeButton = document.getElementById('close-form')
+        newFolderButton.addEventListener('click', () => {
+            newFolderForm.setAttribute('pressed', true);
+            overlay.style.visibility = 'visible';
+            overlay.style.opacity = '1';
+            document.body.style.overflow = 'hidden'
+        });
+
+        closeButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            overlay.style.visibility = 'hidden';
+            overlay.style.visibility = '0';
+            document.body.style.overflow = 'auto';
+            newFolderForm.removeAttribute('pressed')
+        })
+</script>

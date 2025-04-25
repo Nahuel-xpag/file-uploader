@@ -35,7 +35,6 @@ passport.serializeUser((user, done) => {
     done(null, user.id);
 });
 passport.deserializeUser(async (id, done) => {
-    console.log(id)
     try {
         const user = await findUser(id);
         done(null, user)
@@ -53,7 +52,6 @@ exports.auth = () => passport.authenticate("local", {
 exports.getIndex = async (req,res) => {
     if(req.user){
         const userFiles = await findUser(req.user.id);
-        console.log(userFiles.folders[0]);
         res.render("index", {user: req.user, files: userFiles.folders[0].files, folders: userFiles.folders[0].childFolders});
     }else{
         res.render("index");
@@ -72,12 +70,21 @@ exports.createUserPost = async (req, res, next) => {
     }
 }
 
-exports.getUserFolder = async (req, res) => {
-    const userFolders = await findFolder(req.params.folderId);
-    res.render("index", {user: req.user, folders: userFolders})
+/*exports.getUserFolder = async (req, res) => {
+    const userFolder = await findFolder(req.params.folderId);
+    console.log(userFolder.files);
+    res.render("index", {user: req.user, files: userFolder.files, folders: userFolder.childFolders})
 }
 
 exports.createFolderPost = async (req, res) => {
+    //logic for a nested folder
+    if(req.params.folderId){
+        const parentFolder = await findFolder(parseInt(req.params.folderId), 10);
+        await createFolder(req.body.folderName, req.user.id, parseInt(req.params.folderId, 10));
+        const dest = path.join(process.env.FILES_PATH, String(req.user.id), parentFolder.name);
+        fs.mkdirSync(path.join(dest, req.body.folderName), {recursive: true});
+    }else{
+    //logic for a folder inside the root folder
     try {
           await createFolder(req.body.folderName, req.user.id);
           const dest = path.join(process.env.FILES_PATH, String(req.user.id), req.params.folderId ?? '');
@@ -85,14 +92,14 @@ exports.createFolderPost = async (req, res) => {
       } catch(err) {
           console.error(err)
       }
+    }
        res.redirect("/")
-}
+}*/
 
 exports.fileHandler = async (req, res) => {
+    const {folderId} = req.params;
     const currentUser = await findUser(req.user.id);
     const defaultFolderId = currentUser.folders[0].id;
-    await createFile(req.file.originalname, req.params.folderId ?? defaultFolderId);
-
-    console.log("done", req.file);
-    res.redirect("/");
+    await createFile(req.file.originalname, parseInt(folderId, 10) ?? defaultFolderId);
+    res.redirect("/folder/" + req.params.folderId ?? "/");
 }

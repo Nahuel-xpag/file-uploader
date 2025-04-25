@@ -23,7 +23,7 @@
                     <button>Submitibi toilet</button>
                 </form>
                 <div id="overlay"></div>
-                <form action="/user-file/new-folder" method="POST" id="new-folder-form">
+                <form action="/folder/new-folder" method="POST" id="new-folder-form">
                     <label for="folderName">Newerino folderino</label>
                     <input type="text" name="folderName" id="folderName">
                     <button id="close-form">Close</button>
@@ -40,6 +40,9 @@
                                 <img src="assets/imgs/icons/folder-icon.png" alt="icon of a folder">
                                 <h4><%=folder.name%></h4>
                             </a>
+                            <form action="/folder/delete/<%=folder.id%>" method="POST">
+                                <button class="delete-folder">Delete</button>
+                            </form>
                         <%})%>
                     </div>    
             <%}if(locals.files && locals.files.length > 0){%>
