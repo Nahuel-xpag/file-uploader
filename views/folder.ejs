@@ -1,11 +1,15 @@
 <head>
     <link rel="stylesheet" href="/index.css">
 </head>
-<%if(locals.folders && locals.user){%>
+<%if(locals.folder && locals.user){%>
     <body class="user-logged-body">
     <header>
         <h1>File uploader</h1>
-        <a href="/">Back</a>
+        <%if (folder.parentFolderId === null){%>
+            <a href="/">Back</a>
+        <%}else{%>
+            <a href="/folder/<%=folder.parentFolderId%>">Back</a>
+        <%}%>
         <h2><%=user.name%>/<%=folder.name%></h2>
     </header>
     <div class="sidebar">
@@ -20,10 +24,11 @@
                         <a href="/folder/<%=folder.id%>" class="folder">
                             <img src="../assets/imgs/icons/folder-icon.png" alt="icon of a folder">
                             <h4><%=folder.name%></h4>
-                            <form action="/folder/delete/<%=folder.id%>" method="POST">
-                                <button class="delete-folder">Delete</button>
+                        </a>    
+                            <form action="/folder/delete-with-files/<%=folder.id%>" method="post">
+                                <button class="delete-folder">delete</button>
                             </form>
-                        </a>
+                        
                     <%})%>
                 </div>    
         <%}if(locals.files && locals.files.length > 0){%>

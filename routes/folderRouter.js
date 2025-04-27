@@ -1,5 +1,5 @@
 const express = require('express');
-const { getFolder, createFolderPost, deleteFolderPost } = require('../controllers/folderController');
+const { getFolder, createFolderPost, deleteFolderPost, deleteFolderWithFilesPost } = require('../controllers/folderController');
 //const { createFolderPost } = require('../controllers/userController');
 
 const folderRouter = express.Router();
@@ -12,7 +12,9 @@ folderRouter.post('/new-folder', createFolderPost);
 // Post create a new folder in a specific folder
 folderRouter.post('/new-folder/:folderId', createFolderPost);
 // delete folder
-folderRouter.post('/delete/:folderId', deleteFolderPost)
+folderRouter.post('/delete/:folderId', deleteFolderPost);
+// delete folder with files
+folderRouter.post('/delete-with-files/:folderId', deleteFolderWithFilesPost);
 
 
 module.exports = folderRouter;

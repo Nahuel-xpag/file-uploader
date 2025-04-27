@@ -44,7 +44,6 @@ return user
 }
 
 exports.createFolder = async (name, userId, parentFolder = null) => {
-    
     const user = await prisma.user.findUnique({
         where:{
             id: userId,
@@ -59,7 +58,8 @@ exports.createFolder = async (name, userId, parentFolder = null) => {
             
         },
     });
-    await prisma.folder.create({
+
+    const folder = await prisma.folder.create({
         data: {
             name: name,
             userId: userId,
@@ -67,6 +67,7 @@ exports.createFolder = async (name, userId, parentFolder = null) => {
         },
     }).catch(async (err) => {prisma.$disconnect(); console.log(err)})
     .finally(async () => prisma.$disconnect());
+    return folder
 }
 
 exports.findFolder = async (folderId) => {
@@ -95,19 +96,19 @@ exports.deleteFolder = async (folderId) => {
 }
 exports.deleteFolderWithFiles = async (folderId) => {
     
-    const deleteFiles = await prisma.file.deleteMany({
+    const deleteFiles = prisma.file.deleteMany({
         where:{
             folderId: folderId
         }
     })
 
-    const deleteFolder = await prisma.folder.delete({
+    const deleteFolder = prisma.folder.delete({
         where:{
             id: folderId
         }
     })
 
-    const transaction = await prisma.$transaction([deleteFolder, deleteFiles])
+    const transaction = await prisma.$transaction([deleteFiles, deleteFolder])
     .catch(async (err) => {prisma.$disconnect(); console.log(err)})
     .finally(async () => prisma.$disconnect());
     return transaction
@@ -123,11 +124,13 @@ exports.deleteFile = async (fileId) => {
     return file
 }
 
-exports.createFile = async (name, folderId) => {
+exports.createFile = async (name, type, folderId, userId) => {
+    const userFolderPath = process.env.FILES_PATH.concat("/", String(userId), "/", String(folderId));
     await prisma.file.create({
         data: {
             name: name,
             folderId: folderId,
+            type: type,
             path: 'example/path/eskere'
         }
     })

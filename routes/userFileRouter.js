@@ -29,6 +29,6 @@ const storage = multer.diskStorage({
   
 const upload = multer({ storage: storage });
 
-userFileRouter.post("/", upload.single('fotis'), fileHandler);
+userFileRouter.post("/", upload .single('fotis'), fileHandler);
 userFileRouter.post("/:folderId", upload.single('fotis'), fileHandler);
 module.exports = userFileRouter

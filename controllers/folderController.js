@@ -1,4 +1,6 @@
-const { findFolder, createFolder, deleteFolder } = require("../prisma/methods");
+const path = require("node:path");
+const fs = require("fs");
+const { findFolder, createFolder, deleteFolder, deleteFolderWithFiles, findUser } = require("../prisma/methods");
 
 
 exports.getUserFolder = async (req, res) => {
@@ -15,6 +17,12 @@ exports.getFolder = async (req, res) => {
         if (!folder) {
             return res.status(404).json({ error: 'Folder not found' });
         }
+
+        /*
+        come back to this to reroute root folder to index page
+        */
+
+        // Render the folder view with the folder's files and child folders
         res.render('folder', { user: req.user, folders: folder.childFolders, files: folder.files, folder: folder});
     } catch (error) {
         console.error(error);
@@ -23,22 +31,29 @@ exports.getFolder = async (req, res) => {
 }
 
 exports.createFolderPost = async (req, res) => {
+    //i had an epiphany :o there is no need to nest folders in a local file system
+    //the folder structure is already nested in the database
+    //so we can just create a folder in the database and then create a folder in the local file system
+    //and then we can just use the folderId to get the folder from the database
     //logic for a nested folder
-    if(req.params.folderId){
-        const parentFolder = await findFolder(parseInt(req.params.folderId), 10);
-        await createFolder(req.body.folderName, req.user.id, parseInt(req.params.folderId, 10));
-        const dest = path.join(process.env.FILES_PATH, String(req.user.id), parentFolder.name);
-        fs.mkdirSync(path.join(dest, req.body.folderName), {recursive: true});
-    }else{
+
     //logic for a folder inside the root folder
     try {
-          await createFolder(req.body.folderName, req.user.id);
-          const dest = path.join(process.env.FILES_PATH, String(req.user.id), req.params.folderId ?? '');
-          fs.mkdirSync(path.join(dest, req.body.folderName), {recursive: true});
+        if(req.params.folderId){
+            const newFolder = await createFolder(req.body.folderName, req.user.id, parseInt(req.params.folderId, 10));
+            const dest = path.join(process.env.FILES_PATH, String(req.user.id), String(newFolder.id));
+            fs.mkdirSync(path.join(dest), {recursive: true});
+        }else{
+            const user = await findUser(req.user.id);
+            const rootFolder = user.folders[0];
+            const newFolder = await createFolder(req.body.folderName, req.user.id, rootFolder.id);
+            const dest = path.join(process.env.FILES_PATH, String(req.user.id), String(newFolder.id));
+            fs.mkdirSync(path.join(dest), {recursive: true});
+        }
       } catch(err) {
           console.error(err)
       }
-    }
+    
        res.redirect("/")
 }
 
@@ -60,7 +75,22 @@ exports.deleteFolderPost = async (req, res) => {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
     }
-    //res.redirect("/");
-    //res.status(200).json({ message: 'Folder deleted successfully' });
+}
+
+exports.deleteFolderWithFilesPost = async (req, res) => {
+    const { folderId } = req.params;
+    try {
+        // Check if the folder exists
+        const folder = await findFolder(parseInt(folderId, 10));
+        if (!folder) {
+            return res.status(404).json({ error: 'Folder not found' });
+        }
+        // Delete the folder and its files
+        await deleteFolderWithFiles(parseInt(folderId, 10));
+        res.redirect("/");
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 }
 
