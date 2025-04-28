@@ -1,6 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-
+const path = require('node:path');
 exports.createUser = async (name, email, password) => {
     const createUser = await prisma.user.create({
         data: {
@@ -113,9 +113,9 @@ exports.deleteFolderWithFiles = async (folderId) => {
     .finally(async () => prisma.$disconnect());
     return transaction
 }
-//must check if this works later
-exports.deleteFile = async (fileId) => {
-    const file = await prisma.file.delete({
+
+exports.findFile = async (fileId) => {
+    const file = await prisma.file.findUnique({
         where:{
             id: fileId
         },
@@ -124,14 +124,26 @@ exports.deleteFile = async (fileId) => {
     return file
 }
 
-exports.createFile = async (name, type, folderId, userId) => {
-    const userFolderPath = process.env.FILES_PATH.concat("/", String(userId), "/", String(folderId));
+//delete files from db
+exports.deleteFile = async (fileId) => {
+    await prisma.file.delete({
+        where:{
+            id: fileId
+        },
+    }).catch(async (err) => {prisma.$disconnect(); console.log(err)})
+    .finally(async () => prisma.$disconnect());
+}
+
+exports.createFile = async (name, type, folderId, userId, key) => {
+    const userFolderPath = path.join(process.env.FILES_PATH, String(userId), folderId === 1 ? '' : String(folderId), String(userId) + '-' + String(Math.round(userId * 1E9) + name));
+    console.log(userFolderPath);
     await prisma.file.create({
         data: {
             name: name,
             folderId: folderId,
+            key: key,
             type: type,
-            path: 'example/path/eskere'
+            path: userFolderPath
         }
     })
 }

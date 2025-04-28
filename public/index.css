@@ -78,6 +78,29 @@ main{
     overflow: visible;
     background-color: rgb(49, 49, 49);
 }
+.file{
+    display: flex;
+    align-items: center;
+    width: 100px;
+    border: 1px solid black;
+    border-radius: 12px;
+    padding: 8px;
+    overflow: hidden;
+    & img {
+        width: 25px;
+        height: 25px;
+    };
+    & h4{
+        max-width: 50px;
+    }
+}
+.file:hover{
+    background-color: rgb(49, 49, 49);
+}
+.file:focus{
+    overflow: visible;
+    background-color: rgb(49, 49, 49);
+}
 .file-form{
     align-self: center;
     border: 1px solid red;

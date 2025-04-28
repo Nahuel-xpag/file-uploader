@@ -47,11 +47,15 @@
                     </div>    
             <%}if(locals.files && locals.files.length > 0){%>
                 <h2>Your files</h2>    
-                <ul>
                     <%files.forEach(function(file){%>
-                        <li class="file"><%=file.name%></li>
+                        <a href="/user-file/serve/<%=file.id%>" class="file">
+                            <img src="../assets/imgs/icons/file-icon.png" alt="icon of a file">
+                            <h4><%=file.name%></h4>
+                        </a>
+                        <form action="/user-file/delete/<%=folder.id%>/<%=file.id%>/<%=file.name%>" method="post">
+                            <button class="delete-file">delete</button>
+                        </form>
                     <%})%>
-                </ul>
             <%}else{%>
                 <h1>Your files and folders are going to appear here</h1>
             <%}%>

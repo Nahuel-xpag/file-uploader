@@ -52,7 +52,7 @@ exports.auth = () => passport.authenticate("local", {
 exports.getIndex = async (req,res) => {
     if(req.user){
         const userFiles = await findUser(req.user.id);
-        res.render("index", {user: req.user, files: userFiles.folders[0].files, folders: userFiles.folders[0].childFolders});
+        res.render("index", {user: req.user, folder:userFiles.folders[0], files: userFiles.folders[0].files, folders: userFiles.folders[0].childFolders});
     }else{
         res.render("index");
     }
@@ -96,10 +96,10 @@ exports.createFolderPost = async (req, res) => {
        res.redirect("/")
 }*/
 
-exports.fileHandler = async (req, res) => {
+/*exports.fileHandler = async (req, res) => {
     const {folderId} = req.params;
     const currentUser = await findUser(req.user.id);
     const defaultFolderId = currentUser.folders[0].id;
     await createFile(req.file.originalname, parseInt(folderId, 10) ?? defaultFolderId);
     res.redirect("/folder/" + req.params.folderId ?? "/");
-}
+}*/

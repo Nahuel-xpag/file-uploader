@@ -23,6 +23,7 @@ exports.getFolder = async (req, res) => {
         */
 
         // Render the folder view with the folder's files and child folders
+        console.log(folder.files)
         res.render('folder', { user: req.user, folders: folder.childFolders, files: folder.files, folder: folder});
     } catch (error) {
         console.error(error);
