@@ -10,7 +10,7 @@
         <%}else{%>
             <a href="/folder/<%=folder.parentFolderId%>">Back</a>
         <%}%>
-        <h2><%=user.name%>/<%=folder.name%></h2>
+        <h2><%=folder.name%></h2>
     </header>
     <div class="sidebar">
             <%-include('partials/newFolderForm', {folderId: folder.id})%>

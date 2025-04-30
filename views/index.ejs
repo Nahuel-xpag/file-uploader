@@ -10,11 +10,13 @@
     <body class="user-logged-body">
         <header>
             <h1>File uploader</h1>
-            <h1>Welcome <%=user.name%><h1>
-            <a href="/log-out">Log Out</a>
             <h2>Your unit</h2>
         </header>
         <div class="sidebar">
+            <div class="log-info">
+                <h1>Welcome <%=user.name%><h1>
+                <a href="/log-out">Log Out</a>
+            </div>
             <div class="file-form">
                 <button class="create-folder">New Folder</button>
                 <form action="/user-file" method="POST" enctype="multipart/form-data">
@@ -45,7 +47,7 @@
                             </form>
                         <%})%>
                     </div>    
-            <%}if(locals.files && locals.files.length > 0){%>
+            <%}else if(locals.files && locals.files.length > 0){%>
                 <h2>Your files</h2>    
                     <%files.forEach(function(file){%>
                         <a href="/user-file/serve/<%=file.id%>" class="file">
