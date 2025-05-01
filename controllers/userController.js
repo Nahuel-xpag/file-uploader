@@ -52,6 +52,7 @@ exports.auth = () => passport.authenticate("local", {
 exports.getIndex = async (req,res) => {
     if(req.user){
         const userFiles = await findUser(req.user.id);
+        console.log(userFiles.folders[0].files);
         res.render("index", {user: req.user, folder:userFiles.folders[0], files: userFiles.folders[0].files, folders: userFiles.folders[0].childFolders});
     }else{
         res.render("index");

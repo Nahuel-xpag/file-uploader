@@ -6,14 +6,14 @@ const { findUser, createFile, deleteFile, findFile } = require('../prisma/method
 exports.fileHandler = async (req, res) => {
     const {folderId} = req.params;
     const keyName = req.file.originalname.concat(String(req.file.id));
-    if(!folderId){
+    /*if(!folderId){
         const currentUser = await findUser(req.user.id);
         const defaultFolderId = currentUser.folders[0].id;
         await createFile(req.file.originalname, req.file.mimetype, defaultFolderId, req.user.id, keyName);
         res.redirect("/");
-    }
+    }*/
     await createFile(req.file.originalname, req.file.mimetype, parseInt(folderId, 10), req.user.id, keyName);
-    res.redirect("/folder/" + String(req.params.folderId));      
+    res.redirect(folderId === 1 ? "/" : "/folder/" + String(req.params.folderId));      
 }
 
 //serve files

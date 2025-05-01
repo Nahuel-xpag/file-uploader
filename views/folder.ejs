@@ -5,7 +5,7 @@
     <body class="user-logged-body">
     <header>
         <h1>File uploader</h1>
-        <%if (folder.parentFolderId === null){%>
+        <%if (folder.parentFolderId === 1){%>
             <a href="/">Back</a>
         <%}else{%>
             <a href="/folder/<%=folder.parentFolderId%>">Back</a>
@@ -44,7 +44,7 @@
                     </form>
                 <%})%>
             </ul>
-        <%}else{%>
+        <%}else if(locals.files.length < 1 && locals.folders.length < 1){%>
             <h1>This folder is currently empty</h1>
         <%}%>
     </main>

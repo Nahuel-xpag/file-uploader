@@ -19,15 +19,15 @@
             </div>
             <div class="file-form">
                 <button class="create-folder">New Folder</button>
-                <form action="/user-file" method="POST" enctype="multipart/form-data">
+                <form action="/user-file/1" method="POST" enctype="multipart/form-data">
                     <label for="fotis">Upload a file</label>
-                    <input type="file" name="fotis">
-                    <button>Submitibi toilet</button>
+                    <input type="file" name="fotis" required>
+                    <button>confirm ✔</button>
                 </form>
                 <div id="overlay"></div>
                 <form action="/folder/new-folder" method="POST" id="new-folder-form">
                     <label for="folderName">Newerino folderino</label>
-                    <input type="text" name="folderName" id="folderName">
+                    <input type="text" name="folderName" id="folderName" required>
                     <button id="close-form">Close</button>
                     <button>Create</button>
                 </form>
@@ -47,18 +47,20 @@
                             </form>
                         <%})%>
                     </div>    
-            <%}else if(locals.files && locals.files.length > 0){%>
-                <h2>Your files</h2>    
-                    <%files.forEach(function(file){%>
-                        <a href="/user-file/serve/<%=file.id%>" class="file">
-                            <img src="../assets/imgs/icons/file-icon.png" alt="icon of a file">
-                            <h4><%=file.name%></h4>
-                        </a>
-                        <form action="/user-file/delete/<%=folder.id%>/<%=file.id%>/<%=file.name%>" method="post">
-                            <button class="delete-file">delete</button>
-                        </form>
-                    <%})%>
-            <%}else{%>
+            <%}if(locals.files && locals.files.length > 0){%>
+                <h2>Your files</h2>
+                    <div class="files-div">    
+                        <%files.forEach(function(file){%>
+                            <a href="/user-file/serve/<%=file.id%>" class="file">
+                                <img src="../assets/imgs/icons/file-icon.png" alt="icon of a file">
+                                <h4><%=file.name%></h4>
+                            </a>
+                            <form action="/user-file/delete/<%=folder.id%>/<%=file.id%>/<%=file.name%>" method="post">
+                                <button class="delete-file">delete</button>
+                            </form>
+                        <%})%>
+                    </div>
+            <%}if(locals.files.length < 1 && locals.folders.length < 1){%>
                 <h1>Your files and folders are going to appear here</h1>
             <%}%>
         </main>
@@ -95,40 +97,45 @@
     </body>
     <%}%>
     <script>
-        const newFolderButton = document.querySelector('.create-folder');
-        const newFolderForm = document.getElementById('new-folder-form');
-        const overlay = document.getElementById('overlay');
-        const closeButton = document.getElementById('close-form')
-        newFolderButton.addEventListener('click', () => {
-            newFolderForm.setAttribute('pressed', true);
-            overlay.style.visibility = 'visible';
-            overlay.style.opacity = '1';
-            document.body.style.overflow = 'hidden'
-        });
+        function newFolderHandler(){
+            const newFolderButton = document.querySelector('.create-folder');
+            const overlay = document.getElementById('overlay');
+            const newFolderForm = document.getElementById('new-folder-form');
+            const closeButton = document.getElementById('close-form')
 
-        closeButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            overlay.style.visibility = 'hidden';
-            overlay.style.visibility = '0';
-            document.body.style.overflow = 'auto';
-            newFolderForm.removeAttribute('pressed')
-        })
+            newFolderButton.addEventListener('click', () => {
+                newFolderForm.setAttribute('pressed', true);
+                overlay.style.visibility = 'visible';
+                overlay.style.opacity = '1';
+                document.body.style.overflow = 'hidden'
+            });
+
+            closeButton.addEventListener('click', (e) => {
+                overlay.style.visibility = 'hidden';
+                overlay.style.visibility = '0';
+                document.body.style.overflow = 'auto';
+                newFolderForm.removeAttribute('pressed')
+                e.preventDefault();
+            })
+        }
         
-
-
-        const folder = document.querySelectorAll('a.folder');
-        let counter = 0;
-        folder.forEach((folder) => {
-            folder.addEventListener('click',(e) => {
-            counter++;
-            setTimeout(() => {
-                counter = 0;
-            },250);
-            if(counter < 2){
-                e.preventDefault()
-            };
-           console.log(counter)
-        })
-    })
+        function doubleClickFolderHandler(){
+            const folder = document.querySelectorAll('a.folder');
+            let counter = 0;
+            folder.forEach((folder) => {
+                folder.addEventListener('click',(e) => {
+                    counter++;
+                    setTimeout(() => {
+                            counter = 0;
+                    },250);
+                if(counter < 2){
+                    e.preventDefault()
+                };
+                console.log(counter)
+                })
+            })
+        }
+        doubleClickFolderHandler();
+        newFolderHandler(); 
     </script>
 </html>

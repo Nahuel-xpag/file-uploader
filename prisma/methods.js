@@ -135,7 +135,7 @@ exports.deleteFile = async (fileId) => {
 }
 
 exports.createFile = async (name, type, folderId, userId, key) => {
-    const userFolderPath = path.join(process.env.FILES_PATH, String(userId), folderId === 1 ? '' : String(folderId), String(userId) + '-' + String(Math.round(userId * 1E9) + name));
+    const userFolderPath = path.join(process.env.FILES_PATH, String(userId), String(folderId), String(userId) + '-' + String(Math.round(userId * 1E9) + name));
     console.log(userFolderPath);
     await prisma.file.create({
         data: {
