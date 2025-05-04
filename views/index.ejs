@@ -6,7 +6,7 @@
     <title>File Uploader</title>
     <link rel="stylesheet" href="/index.css">
 </head>
-    <%if(locals.user){%>
+    <%if(locals.user && locals.folder){%>
     <body class="user-logged-body">
         <header>
             <h1>File uploader</h1>
@@ -19,7 +19,7 @@
             </div>
             <div class="file-form">
                 <button class="create-folder">New Folder</button>
-                <form action="/user-file/1" method="POST" enctype="multipart/form-data">
+                <form action="/user-file/<%=folder.id%>" method="POST" enctype="multipart/form-data">
                     <label for="fotis">Upload a file</label>
                     <input type="file" name="fotis" required>
                     <button>confirm ✔</button>
@@ -38,26 +38,30 @@
                 <h2>Your folders</h2>
                     <div class="folder-div">    
                         <%folders.forEach(function(folder){%>
-                            <a href="/folder/<%=folder.id%>" class="folder">
-                                <img src="assets/imgs/icons/folder-icon.png" alt="icon of a folder">
-                                <h4><%=folder.name%></h4>
-                            </a>
-                            <form action="/folder/delete/<%=folder.id%>" method="POST">
-                                <button class="delete-folder">Delete</button>
-                            </form>
+                            <div class="file">
+                                <form action="/folder/delete-with-files/<%=folder.id%>" method="POST">
+                                    <button id="delete-folder">Delete</button>
+                                </form>
+                                <a href="/folder/<%=folder.id%>">
+                                    <img src="assets/imgs/icons/folder-icon.png" alt="icon of a folder">
+                                    <h4><%=folder.name%></h4>
+                                </a>
+                            </div>
                         <%})%>
                     </div>    
             <%}if(locals.files && locals.files.length > 0){%>
                 <h2>Your files</h2>
                     <div class="files-div">    
                         <%files.forEach(function(file){%>
-                            <a href="/user-file/serve/<%=file.id%>" class="file">
-                                <img src="../assets/imgs/icons/file-icon.png" alt="icon of a file">
-                                <h4><%=file.name%></h4>
-                            </a>
-                            <form action="/user-file/delete/<%=folder.id%>/<%=file.id%>/<%=file.name%>" method="post">
-                                <button class="delete-file">delete</button>
-                            </form>
+                            <div class="file">
+                                <form action="/user-file/delete/<%=folder.id%>/<%=file.id%>/<%=file.name%>" method="post">
+                                    <button id="delete-file">delete</button>
+                                </form>
+                                <a href="/user-file/serve/<%=file.id%>">
+                                    <img src="../assets/imgs/icons/file-icon.png" alt="icon of a file">
+                                    <h4><%=file.name%></h4>
+                                </a>
+                            </div>
                         <%})%>
                     </div>
             <%}if(locals.files.length < 1 && locals.folders.length < 1){%>
@@ -66,35 +70,7 @@
         </main>
     </body>
     <%}else{%>
-    <body>
-        <div class="login-div">
-            <h1>Log in!</h1>
-                    <form action="/log-in" method="POST">
-                        <label for="email">Email</label>
-                        <input type="text" name="email" id="email" placeholder="email" />
-                        <label for="password">Password</label>
-                        <input type="password" name="password" id="password" />
-                        <button>Log In</button>
-                    </form>
-                    <a href="/sign-up">Create an account</a>
-                    <div class="sign-up-container">
-                        <div class="sign-up">
-                            <h1>Sign up</h1>
-                            <form action="/sign-up" method="POST">
-                                <label for="name">Name:</label>
-                                <input type="text" name="name" id="name" required>
-                                <label for="email">E-Mail:</label>
-                                <input type="email" name="email" id="email" required>
-                                <label for="password">Password:</label>
-                                <input type="password" name="password" id="password">
-                                <label for="confirm-password">Confirm password:</label>
-                                <input type="password" name="confirm-password" id="confirm-password">
-                                <button type="submit">Submit</button>
-                            </form>
-                        </div>
-                    </div>
-        </div>
-    </body>
+        <%-include('partials/signUpForm')%>
     <%}%>
     <script>
         function newFolderHandler(){

@@ -5,7 +5,7 @@ const { findFolder, createFolder, deleteFolder, deleteFolderWithFiles, findUser 
 
 exports.getUserFolder = async (req, res) => {
     const userFolder = await findFolder(req.params.folderId);
-    console.log(userFolder.files);
+    
     res.render("index", {user: req.user, files: userFolder.files, folders: userFolder.childFolders})
 }
 
@@ -13,18 +13,22 @@ exports.getFolder = async (req, res) => {
     const { folderId } = req.params;
     try {
         const folder = await findFolder(parseInt(folderId, 10));
+        const parentFolder = await findFolder(folder.parentFolderId);
         // Check if the folder exists
         if (!folder) {
             return res.status(404).json({ error: 'Folder not found' });
         }
-
-        /*
-        come back to this to reroute root folder to index page
-        */
-
-        // Render the folder view with the folder's files and child folders
-        console.log(folder.files)
-        res.render('folder', { user: req.user, folders: folder.childFolders, files: folder.files, folder: folder});
+        folder.files.forEach(file => {
+            file.parsedDate = new Date(file.createdAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+            });
+        })
+        console.log(folder.files);
+        res.render('folder', { user: req.user, folders: folder.childFolders, files: folder.files, folder: folder, parentFolder: parentFolder.name});
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
@@ -55,7 +59,7 @@ exports.createFolderPost = async (req, res) => {
           console.error(err)
       }
     
-       res.redirect("/")
+       res.redirect(req.params.folderId ? "/folder/" + String(req.params.folderId) : "/");
 }
 
 exports.deleteFolderPost = async (req, res) => {
@@ -79,9 +83,9 @@ exports.deleteFolderPost = async (req, res) => {
 }
 
 exports.deleteFolderWithFilesPost = async (req, res) => {
-    const { folderId } = req.params;
     try {
         // Check if the folder exists
+        const { folderId } = req.params;
         const folder = await findFolder(parseInt(folderId, 10));
         if (!folder) {
             return res.status(404).json({ error: 'Folder not found' });
@@ -89,7 +93,8 @@ exports.deleteFolderWithFilesPost = async (req, res) => {
         // Delete the folder and its files
         await deleteFolderWithFiles(parseInt(folderId, 10));
         res.redirect("/");
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
     }

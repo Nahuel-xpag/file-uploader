@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const path = require('node:path');
 const fs = require('fs')
 
-const { findUser, findFolder, createUser, createFolder, createFile } = require('../prisma/methods');
+const { findUser, createUser, getAllFiles} = require('../prisma/methods');
 
 
 passport.use(
@@ -52,7 +52,7 @@ exports.auth = () => passport.authenticate("local", {
 exports.getIndex = async (req,res) => {
     if(req.user){
         const userFiles = await findUser(req.user.id);
-        console.log(userFiles.folders[0].files);
+        console.log(userFiles);
         res.render("index", {user: req.user, folder:userFiles.folders[0], files: userFiles.folders[0].files, folders: userFiles.folders[0].childFolders});
     }else{
         res.render("index");

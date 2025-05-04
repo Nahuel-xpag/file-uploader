@@ -5,12 +5,12 @@
     <body class="user-logged-body">
     <header>
         <h1>File uploader</h1>
-        <%if (folder.parentFolderId === 1){%>
+        <%if (locals.parentFolder && parentFolder === 'root'){%>
             <a href="/">Back</a>
         <%}else{%>
-            <a href="/folder/<%=folder.parentFolderId%>">Back</a>
+            <a href="/folder/<%=folder.parentFolderId%><%console.log(locals)%>">Back</a>
         <%}%>
-        <h2><%=folder.name%></h2>
+        <h2>Your unit / <%=folder.name%></h2>
     </header>
     <div class="sidebar">
             <%-include('partials/newFolderForm', {folderId: folder.id})%>
@@ -33,17 +33,24 @@
                 </div>    
         <%}if(locals.files && locals.files.length > 0){%>
             <h2>Your files</h2>    
-            <ul>
-                <%files.forEach(function(file){%>
-                    <a href="/user-file/serve/<%=file.id%>" class="file">
-                        <img src="../assets/imgs/icons/file-icon.png" alt="icon of a file">
-                        <h4><%=file.name%></h4>
-                    </a>
-                    <form action="/user-file/delete/<%=folder.id%>/<%=file.id%>/<%=file.name%>" method="post">
-                        <button class="delete-file">delete</button>
-                    </form>
-                <%})%>
-            </ul>
+                    <div class="files-div">    
+                        <%files.forEach(function(file){%>
+                            <div class="file">
+                                <form action="/user-file/delete/<%=folder.id%>/<%=file.id%>/<%=file.name%>" method="post">
+                                    <button id="delete-file">delete</button>
+                                </form>
+                                <a href="/user-file/serve/<%=file.id%>">
+                                    <img src="../assets/imgs/icons/file-icon.png" alt="icon of a file">
+                                    <h4><%=file.name%></h4>
+                                </a>
+                                <div class="file-details" id="file-details">
+                                    <p>Size: <%=file.size%>bytes</p>
+                                    <p>Type: <%=file.type%></p>
+                                    <p>Created at: <%=file.parsedDate%></p>
+                                </div>
+                            </div>    
+                        <%})%>
+                    </div>
         <%}else if(locals.files.length < 1 && locals.folders.length < 1){%>
             <h1>This folder is currently empty</h1>
         <%}%>

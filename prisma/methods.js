@@ -7,13 +7,15 @@ exports.createUser = async (name, email, password) => {
             name: name,
             email: email,
             password: password,
-            folders: {
-                create: [
-                    {name: 'default'},
-                ],
-            },
         },
-    }).then()
+    })
+    await prisma.folder.create({
+        data: {
+            name: "root",
+            userId: createUser.id,
+        },
+    })
+    .then()
     .catch(e => console.error(e))
     .finally(async () => await prisma.$disconnect());
 
@@ -134,7 +136,7 @@ exports.deleteFile = async (fileId) => {
     .finally(async () => prisma.$disconnect());
 }
 
-exports.createFile = async (name, type, folderId, userId, key) => {
+exports.createFile = async (name, type, size, folderId, userId, key) => {
     const userFolderPath = path.join(process.env.FILES_PATH, String(userId), String(folderId), String(userId) + '-' + String(Math.round(userId * 1E9) + name));
     console.log(userFolderPath);
     await prisma.file.create({
@@ -143,7 +145,18 @@ exports.createFile = async (name, type, folderId, userId, key) => {
             folderId: folderId,
             key: key,
             type: type,
+            size: size,
             path: userFolderPath
         }
     })
+}
+
+exports.getAllFiles = async () => {
+    const files = await prisma.file.findMany({
+        include: {
+            folder: true,
+        },
+    }).catch(async (err) => {prisma.$disconnect(); console.log(err)})
+    .finally(async () => prisma.$disconnect());
+    return files
 }

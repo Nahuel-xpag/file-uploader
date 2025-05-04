@@ -10,7 +10,6 @@ const { findFolder } = require('../prisma/methods');
 const storage = multer.diskStorage({
     destination: async function (req, file, cb) {
       const {folderId} = req.params;
-      console.log(folderId)
       const folder = await findFolder(parseInt(folderId, 10));
       if (!folder) {
         const dest = path.join(process.env.FILES_PATH, String(req.user.id));

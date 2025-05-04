@@ -1,10 +1,11 @@
 const fs = require('fs');
 const fsPromises = fs.promises;
 const path = require('path');
-const { findUser, createFile, deleteFile, findFile } = require('../prisma/methods');
+const { findFolder, createFile, deleteFile, findFile } = require('../prisma/methods');
 
 exports.fileHandler = async (req, res) => {
     const {folderId} = req.params;
+    const folder = await findFolder(parseInt(folderId, 10));
     const keyName = req.file.originalname.concat(String(req.file.id));
     /*if(!folderId){
         const currentUser = await findUser(req.user.id);
@@ -12,8 +13,8 @@ exports.fileHandler = async (req, res) => {
         await createFile(req.file.originalname, req.file.mimetype, defaultFolderId, req.user.id, keyName);
         res.redirect("/");
     }*/
-    await createFile(req.file.originalname, req.file.mimetype, parseInt(folderId, 10), req.user.id, keyName);
-    res.redirect(folderId === 1 ? "/" : "/folder/" + String(req.params.folderId));      
+    await createFile(req.file.originalname, req.file.mimetype, req.file.size, parseInt(folderId, 10),  req.user.id, keyName);
+    res.redirect(folder.name === 'root' ? "/" : "/folder/" + String(req.params.folderId));      
 }
 
 //serve files
@@ -41,14 +42,15 @@ exports.serveFilesGet = async (req, res) => {
 //delete files
 exports.deleteFilePost = async (req, res) => {
     try{
-        const { fileId, folderId, fileName } = req.params;
+        const { fileId, folderId} = req.params;
+        const folder = await findFolder(parseInt(folderId, 10));
         const file = await findFile(parseInt(fileId, 10));
         const filePath = file.path
         console.log(filePath);
         await deleteFile(parseInt(fileId, 10));
         await fsPromises.rm(filePath, { recursive: true, force: true });
         
-        folderId ? res.redirect("/folder/" + String(folderId)) : res.redirect("/");   
+        folder.name === 'root' ?  res.redirect("/"): res.redirect("/folder/" + String(folderId));   
     }catch(err){
         console.error(err);
         res.status(500).json({ error: 'Internal server error' });

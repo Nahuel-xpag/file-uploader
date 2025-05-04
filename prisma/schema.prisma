@@ -39,6 +39,8 @@ model File {
   folder    Folder  @relation(fields: [folderId], references: [id])
   folderId  Int
   type      String
+  size      Int
+  createdAt DateTime @default(now())
   path      String?
 }
 
