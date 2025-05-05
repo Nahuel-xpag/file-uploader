@@ -38,11 +38,11 @@
                 <h2>Your folders</h2>
                     <div class="folder-div">    
                         <%folders.forEach(function(folder){%>
-                            <div class="file">
+                            <div class="folder">
                                 <form action="/folder/delete-with-files/<%=folder.id%>" method="POST">
                                     <button id="delete-folder">Delete</button>
                                 </form>
-                                <a href="/folder/<%=folder.id%>">
+                                <a href="/folder/<%=folder.id%>" class="folder-link">
                                     <img src="assets/imgs/icons/folder-icon.png" alt="icon of a folder">
                                     <h4><%=folder.name%></h4>
                                 </a>
@@ -96,7 +96,7 @@
         }
         
         function doubleClickFolderHandler(){
-            const folder = document.querySelectorAll('a.folder');
+            const folder = document.querySelectorAll('a.folder-link');
             let counter = 0;
             folder.forEach((folder) => {
                 folder.addEventListener('click',(e) => {
@@ -111,7 +111,29 @@
                 })
             })
         }
+
+        function fileDetailsHandler(){
+            const fileDetails = document.querySelectorAll('.file-details');
+            const toggleFileDetails = document.querySelectorAll('#toggle-file-details');
+            fileDetails.forEach((details) => {
+                details.style.display = 'none';
+            })
+            toggleFileDetails.forEach((button) => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const details = e.target.parentElement.parentElement.querySelector('.file-details');
+                    const fileElement = e.target.closest('.file');
+                    fileElement.style.overflow = details.style.display === 'none' ? 'visible' : 'hidden';
+                    if(details.style.display === 'none'){
+                        details.style.display = 'block';
+                    }else{
+                        details.style.display = 'none';
+                    }
+                })
+            })
+        }
         doubleClickFolderHandler();
-        newFolderHandler(); 
+        newFolderHandler();
+        fileDetailsHandler(); 
     </script>
 </html>

@@ -77,17 +77,16 @@ main{
 }
 .folder{
     display: flex;
+    flex-direction: column;
     align-items: center;
     width: 100px;
-    border-radius: 12px;
-    border: 0.5px solid rgb(78, 78, 78);
-    padding: 8px;
-    overflow: hidden;
-    text-decoration: none;
-    color: rgb(255, 255, 255);
-    font-size: 1rem;
+    height: 120px;
+    border: 1px solid rgba(19, 19, 19, 0.919);
     background-color: rgba(127, 21, 21, 0.89);
     text-shadow: 0.5px 0px 2px black;
+    border-radius: 12px;
+    padding: 8px;
+    overflow: hidden;
     & img {
         width: 25px;
         height: 25px;
@@ -95,6 +94,15 @@ main{
     & h4{
         max-width: 50px;
     }
+    & a{
+        text-decoration: none;
+        color: rgb(255, 255, 255);
+        font-size: 1rem;
+        max-width: 100%;
+    }
+}
+#delete-folder-form{
+    align-self: flex-end;
 }
 .folder:hover{
     background-color: rgb(49, 49, 49);
@@ -104,18 +112,6 @@ main{
     background-color: rgb(49, 49, 49);
 }
 
-.file{ 
-    border-radius: 12px;
-    padding: 8px;
-    background-color: rgba(127, 21, 21, 0.89);
-    text-shadow: 0.5px 0px 2px black;
-}
-.file a{
-    text-decoration: none;
-    color: rgb(255, 255, 255);
-    font-size: 1rem;
-    max-width: 100%;
-}
 .files-div{
     display: flex;
     flex-wrap: wrap;
@@ -125,8 +121,10 @@ main{
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100px;
+    width: 200px;
     height: 120px;
+    background-color: rgba(127, 21, 21, 0.89);
+    text-shadow: 0.5px 0px 2px black;
     border: 1px solid rgba(19, 19, 19, 0.919);
     border-radius: 12px;
     padding: 8px;
@@ -135,8 +133,31 @@ main{
         width: 25px;
         height: 25px;
     };
-    & h4{
-        font-size: 12px;
+    & a{
+        text-decoration: none;
+        color: rgb(255, 255, 255);
+        font-size: 1rem;
+        max-width: 100%;
+        & p{
+            word-wrap: break-word;
+            word-break: break-all;
+            display: block;
+            font-size: 12px;
+        }
+    }
+    & .file-details{
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: start;
+        word-wrap: break-word;
+        word-break: break-all;
+        border-radius: 8px;
+        background-color: rgb(211, 49, 49);
+        gap: 8px;
+        padding: 8px;
+        width: 100%;
     }
 }
 .file:hover{
@@ -145,9 +166,31 @@ main{
 a.file:focus{
     background-color: rgb(49, 49, 49);
 }
-.file form{
+.folder form{
     justify-self: flex-end;
     align-self: flex-end;
+}
+.file .file-buttons{
+    display: flex;
+    max-width: 100%;
+    justify-content: space-between;
+    align-items: start;
+    gap: 6px;
+    & button{
+        font-size: 12px;
+        text-decoration: none;
+        display: block;
+        color: rgb(4, 4, 4);
+        background-color: rgb(233, 229, 229);
+        border: 0.5px solid rgb(78, 78, 78);
+        border-radius: 8px;
+    }
+    & button:hover{
+        background-color: rgb(255, 0, 0);
+        color: white;
+        cursor: pointer;
+    }
+
 }
 #delete-file, #delete-folder{
     text-decoration: none;

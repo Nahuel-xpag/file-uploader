@@ -27,7 +27,6 @@ exports.getFolder = async (req, res) => {
                 minute: '2-digit',
             });
         })
-        console.log(folder.files);
         res.render('folder', { user: req.user, folders: folder.childFolders, files: folder.files, folder: folder, parentFolder: parentFolder.name});
     } catch (error) {
         console.error(error);
@@ -36,13 +35,7 @@ exports.getFolder = async (req, res) => {
 }
 
 exports.createFolderPost = async (req, res) => {
-    //i had an epiphany :o there is no need to nest folders in a local file system
-    //the folder structure is already nested in the database
-    //so we can just create a folder in the database and then create a folder in the local file system
-    //and then we can just use the folderId to get the folder from the database
-    //logic for a nested folder
 
-    //logic for a folder inside the root folder
     try {
         if(req.params.folderId){
             const newFolder = await createFolder(req.body.folderName, req.user.id, parseInt(req.params.folderId, 10));
