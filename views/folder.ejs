@@ -41,7 +41,7 @@
                                     <form action="/user-file/delete/<%=folder.id%>/<%=file.id%>/<%=file.name%>" method="post">
                                         <button id="delete-file">delete</button>
                                     </form>
-                                    <form action="/user-file/download/<%=file.id%>" method="post">
+                                    <form action="/user-file/download/<%=file.id%>" method="get">
                                         <button id="download-file">download</button>
                                     </form>
                                     <button id="toggle-file-details">Details</button>
@@ -51,10 +51,11 @@
                                     <p><%=file.name%></p>
                                 </a>
                                 <div class="file-details" id="file-details" style="display: none;">
+                                    <button id="close-details">Close</button>
                                     <p>Name: <%=file.name%></p>
                                     <p>Size: <%=file.size%>bytes</p>
                                     <p>Type: <%=file.type%></p>
-                                    <p>Created at: <%=file.parsedDate%></p>
+                                    <p>Created: <%=file.parsedDate%></p>
                                 </div>
                             </div>    
                         <%})%>
@@ -107,22 +108,21 @@
         const fileDiv = document.querySelectorAll('.file');
         const fileDetails = document.querySelectorAll('.file-details');
         const toggleFileDetails = document.querySelectorAll('#toggle-file-details');
-        fileDetails.forEach((details) => {
-            details.style.display = 'none';
-        })
+        const closeDetails = document.querySelectorAll('#close-details');
+
         toggleFileDetails.forEach((button) => {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
                 const details = e.target.parentElement.parentElement.querySelector('.file-details');
-                const fileElement = e.target.closest('.file');
-                fileElement.style.overflow = details.style.display === 'none' ? 'visible' : 'hidden';
-                if(details.style.display === 'none'){
-                    details.style.display = 'block';
-                    fileDiv.style.overflow = 'visible';
-                }else{
-                    details.style.display = 'none';
-                    fileDiv.style.overflow = 'hidden';
-                }
+                details.style.display = 'block';
+            })
+        })
+
+        closeDetails.forEach((button) => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const details = e.target.parentElement.parentElement.querySelector('.file-details');
+                details.style.display = 'none';
             })
         })
     }

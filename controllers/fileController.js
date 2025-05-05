@@ -17,6 +17,21 @@ exports.fileHandler = async (req, res) => {
     res.redirect(folder.name === 'root' ? "/" : "/folder/" + String(req.params.folderId));      
 }
 
+//download files
+exports.downloadFileGet = async (req, res) => {
+    const {fileId} = req.params;
+    const file = await findFile(parseInt(fileId, 10));
+    const filePath = file.path;
+    res.download(filePath, file.name, (err) => {
+        if (err) {
+            console.error('Error downloading file:', err);
+            res.status(500).send('Error downloading file');
+        } else {
+            console.log('File downloaded successfully');
+        }
+    })
+}
+
 //serve files
 exports.serveFilesGet = async (req, res) => {
     const {fileId} = req.params;

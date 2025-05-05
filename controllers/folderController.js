@@ -19,13 +19,13 @@ exports.getFolder = async (req, res) => {
             return res.status(404).json({ error: 'Folder not found' });
         }
         folder.files.forEach(file => {
-            file.parsedDate = new Date(file.createdAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
+            file.parsedDate = new Date(file.createdAt).toLocaleString('en-GB', {
                 hour: '2-digit',
                 minute: '2-digit',
-            });
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            }).replace(',', '');
         })
         res.render('folder', { user: req.user, folders: folder.childFolders, files: folder.files, folder: folder, parentFolder: parentFolder.name});
     } catch (error) {

@@ -3,7 +3,7 @@ const multer = require('multer');
 const userFileRouter = Router();
 const path = require('node:path')
 const fs = require('fs');
-const { fileHandler, deleteFilePost, serveFilesGet} = require('../controllers/fileController');
+const { fileHandler, deleteFilePost, serveFilesGet, downloadFileGet} = require('../controllers/fileController');
 const { findFolder } = require('../prisma/methods');
 
 //add a function to store files on its folder for the corresponding user OR DIE TRYING
@@ -32,5 +32,6 @@ const upload = multer({ storage: storage });
 //userFileRouter.post("/", upload .single('fotis'), fileHandler);
 userFileRouter.post("/:folderId", upload.single('fotis'), fileHandler);
 userFileRouter.post("/delete/:folderId/:fileId/:fileName", deleteFilePost);
-userFileRouter.get("/serve/:fileId", serveFilesGet); 
+userFileRouter.get("/serve/:fileId", serveFilesGet);
+userFileRouter.get("/download/:fileId", downloadFileGet); 
 module.exports = userFileRouter
